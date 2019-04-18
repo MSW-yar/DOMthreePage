@@ -124,6 +124,7 @@ class makeSignupForm {
     } else {
       localStorage.setItem("email", this.signupForm.userEmail.value);
       this.loadAfterSignUp();
+      routeToLoginAfterSignup();
     }
   }
 }
@@ -135,13 +136,52 @@ class makeSignupForm {
 
 // =============== //
 
-window.onload = () => {
-  if (localStorage.email != null) {
-    new loginPage();
-    if (location.pathname != "/login") {
-      location.pathname = "/login";
-    }
-  } else {
+function routeToLoginAfterSignup() {
+  if (location.pathname != null || location.pathname != "") {
+    location.pathname = "/login";
+  }
+}
+
+// ============= //
+function showLogin() {
+  new loginPage();
+  if (location.pathname != "/login") {
+    location.pathname = "/login";
+  }
+}
+
+function showSignup() {
+  new loginPage();
+  if (location.pathname != "/signup") {
+    location.pathname = "/signup";
+  }
+}
+
+// ===================== //
+
+function onloadCheck() {
+  if (location.pathname == "/login") {
+    showLogin();
+  } else if (location.pathname == "/signup") {
     new makeSignupForm();
   }
-};
+  else if(location.pathname == '/'){
+    if(localStorage.getItem('email')==null){
+        new makeSignupForm();
+    }
+    else {
+        // if(localStorage.getItem('email')!= null){
+        //     showLogin();
+        // }
+        
+        // console.log('asds');
+        
+            showLogin();
+        
+    }
+  }
+}
+
+// =================== //
+
+window.onload = onloadCheck;
