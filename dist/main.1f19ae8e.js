@@ -118,6 +118,12 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"main.js":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 function createTag(tagName) {
   var innerContent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
   var tag = document.createElement(tagName);
@@ -138,68 +144,155 @@ function pushToHtml(parent, child) {
 
 var app = document.querySelector("#app");
 
-function loginObject() {
-  var loginFormObj = {
-    userEmail: createInput("email"),
-    userPassword: createInput("password"),
-    loginButton: createTag("button", "Log In")
-  };
-  return loginFormObj;
-}
+var loginPage =
+/*#__PURE__*/
+function () {
+  function loginPage() {
+    _classCallCheck(this, loginPage);
 
-function addLoginForm() {
-  pushToHtml(app, createTag("label", "Email"));
-  pushToHtml(app, loginForm.userEmail);
-  pushToHtml(app, createTag("label", "Password"));
-  pushToHtml(app, loginForm.userPassword);
-  pushToHtml(app, loginForm.loginButton);
-}
-
-var loginForm = loginObject();
-
-function displayLoginPage() {
-  addLoginForm();
-} // displayLoginPage()
-//  ===================== //
-
-
-function addtoLC(inputKey, inputValue) {
-  if (inputValue == "") {
-    alert("Empty " + inputKey);
-  } else {
-    localStorage.setItem(inputKey, inputValue);
+    this.loginForm = this.loginObject();
+    this.addLoginForm();
+    this.loginButtonFunction();
   }
-}
 
-loginForm.loginButton.onclick = function () {
-  addtoLC("email", loginForm.userEmail.value);
-}; // ============================= //
+  _createClass(loginPage, [{
+    key: "loginObject",
+    value: function loginObject() {
+      var loginFormObj = {
+        userEmail: createInput("email"),
+        userPassword: createInput("password"),
+        loginButton: createTag("button", "Log In")
+      };
+      return loginFormObj;
+    }
+  }, {
+    key: "addLoginForm",
+    value: function addLoginForm() {
+      pushToHtml(app, createTag("label", "Email"));
+      pushToHtml(app, this.loginForm.userEmail);
+      pushToHtml(app, createTag("label", "Password"));
+      pushToHtml(app, this.loginForm.userPassword);
+      pushToHtml(app, this.loginForm.loginButton);
+    }
+  }, {
+    key: "addtoLC",
+    value: function addtoLC(inputKey, inputValue) {
+      if (inputValue == "") {
+        alert("Empty " + inputKey);
+      } else {
+        localStorage.setItem(inputKey, inputValue);
+      }
+    }
+  }, {
+    key: "loginButtonFunction",
+    value: function loginButtonFunction() {
+      var _this = this;
+
+      this.loginForm.loginButton.onclick = function () {
+        _this.addtoLC("email", _this.loginForm.userEmail.value);
+      };
+    }
+  }]);
+
+  return loginPage;
+}(); //  ===================== //
+// ============================= //
 
 
-var signupForm = {
-  firstName: createInput(),
-  secondName: createInput(),
-  dateOfBirth: createInput("date"),
-  userEmail: createInput("email"),
-  tAndC: createInput("checkbox"),
-  signupButton: createTag("button", "Sign Up")
+var makeSignupForm =
+/*#__PURE__*/
+function () {
+  function makeSignupForm() {
+    _classCallCheck(this, makeSignupForm);
+
+    this.signupForm = this.signupObject();
+    this.addSignUpForm();
+    this.submitButton();
+  }
+
+  _createClass(makeSignupForm, [{
+    key: "signupObject",
+    value: function signupObject() {
+      signupObj = {
+        firstName: createInput(),
+        secondName: createInput(),
+        dateOfBirth: createInput("date"),
+        userEmail: createInput("email"),
+        tAndC: createInput("checkbox"),
+        signupButton: createTag("button", "Sign Up")
+      };
+      return signupObj;
+    }
+  }, {
+    key: "addSignUpForm",
+    value: function addSignUpForm() {
+      pushToHtml(app, createTag("label", "First Name"));
+      pushToHtml(app, this.signupForm.firstName);
+      pushToHtml(app, createTag("label", "Second Name"));
+      pushToHtml(app, this.signupForm.secondName);
+      pushToHtml(app, createTag("label", "Date of Birth"));
+      pushToHtml(app, this.signupForm.dateOfBirth);
+      pushToHtml(app, createTag("label", "Email Address"));
+      pushToHtml(app, this.signupForm.userEmail);
+      pushToHtml(app, createTag("label", "I accpet T&C"));
+      pushToHtml(app, this.signupForm.tAndC);
+      pushToHtml(app, this.signupForm.signupButton);
+    }
+  }, {
+    key: "submitButton",
+    value: function submitButton() {
+      this.signupForm.firstName.onkeyup = this.clickSignupButton.bind(this);
+      this.signupForm.secondName.onkeyup = this.clickSignupButton.bind(this);
+      this.signupForm.userEmail.onkeyup = this.clickSignupButton.bind(this);
+      this.signupForm.dateOfBirth.onkeyup = this.clickSignupButton.bind(this);
+      this.signupForm.signupButton.onclick = this.signupButtonAction.bind(this);
+    }
+  }, {
+    key: "loadAfterSignUp",
+    value: function loadAfterSignUp() {
+      if (localStorage.email != null) {
+        location.pathname = "/asld";
+      }
+    }
+  }, {
+    key: "clickSignupButton",
+    value: function clickSignupButton(e) {
+      if (e.key == "Enter") {
+        this.signupForm.signupButton.click();
+      }
+    }
+  }, {
+    key: "signupButtonAction",
+    value: function signupButtonAction() {
+      if (this.signupForm.tAndC.checked == false) {
+        alert("T&C error");
+      } else if (this.signupForm.userEmail.value == "" || this.signupForm.firstName.value == "" || this.signupForm.dateOfBirth.value == "") {
+        alert("Please complete the form");
+      } else {
+        localStorage.setItem("email", this.signupForm.userEmail.value);
+        this.loadAfterSignUp();
+      }
+    }
+  }]);
+
+  return makeSignupForm;
+}(); // =========================== //
+// let login = new loginPage();
+// let signuppage = new makeSignupForm();
+// =============== //
+
+
+window.onload = function () {
+  if (localStorage.email != null) {
+    new loginPage();
+
+    if (location.pathname != "/login") {
+      location.pathname = "/login";
+    }
+  } else {
+    new makeSignupForm();
+  }
 };
-
-function addSignUpForm() {
-  pushToHtml(app, createTag("label", "First Name"));
-  pushToHtml(app, signupForm.firstName);
-  pushToHtml(app, createTag("label", "Second Name"));
-  pushToHtml(app, signupForm.secondName);
-  pushToHtml(app, createTag("label", "Date of Birth"));
-  pushToHtml(app, signupForm.dateOfBirth);
-  pushToHtml(app, createTag("label", "Email Address"));
-  pushToHtml(app, signupForm.userEmail);
-  pushToHtml(app, createTag("label", "I accpet T&C"));
-  pushToHtml(app, signupForm.tAndC);
-  pushToHtml(app, signupForm.signupButton);
-}
-
-addSignUpForm();
 },{}],"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
