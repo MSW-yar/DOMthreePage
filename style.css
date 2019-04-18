@@ -1,0 +1,19 @@
+body {
+  height: 100vh;
+  text-align: center;
+  margin: 0;
+}
+
+#app {
+  margin: auto;
+  padding: 10%;
+  background: skyblue;
+  display: grid;
+  grid-template-columns: auto;
+}
+
+#app button {
+  border-radius: 40% 0;
+  background: green;
+  color: white;
+}
