@@ -17,11 +17,12 @@ function pushToHtml(parent, child) {
 // =========================================== //
 let app = document.querySelector("#app");
 
-class loginPage {
+class showLoginPage {
   constructor() {
     this.loginForm = this.loginObject();
     this.addLoginForm();
-    this.loginButtonFunction();
+    this.submitFuncion();
+    // console.log(this.loginForm.loginButton);
   }
 
   loginObject() {
@@ -41,23 +42,39 @@ class loginPage {
     pushToHtml(app, this.loginForm.loginButton);
   }
 
-  addtoLC(inputKey, inputValue) {
-    if (inputValue == "") {
-      alert("Empty " + inputKey);
-    } else {
-      localStorage.setItem(inputKey, inputValue);
+  submitFuncion() {
+    this.loginForm.userEmail.onkeyup = this.clickLoginButton.bind(this);
+    this.loginForm.userPassword.onkeyup = this.clickLoginButton.bind(this);
+    this.loginForm.loginButton.onclick = this.loginButtonAction.bind(this);
+  }
+
+  clickLoginButton(e) {
+    if (e.key == "Enter") {
+      this.loginForm.loginButton.click();
     }
   }
 
-  loginButtonFunction() {
-    this.loginForm.loginButton.onclick = () => {
-      this.addtoLC("email", this.loginForm.userEmail.value);
-    };
+  //   loginButtonAction() {}
+
+  loginButtonAction() {
+    if (
+      this.loginForm.userEmail.value == "" ||
+      this.loginForm.userPassword.value == ""
+    ) {
+      alert("Error");
+    } else {
+      localStorage.setItem("email", this.loginForm.userEmail.value);
+      localStorage.setItem("password", this.loginForm.userPassword.value);
+      this.routerToLandingPageAfterLogin();
+    }
+  }
+
+  routerToLandingPageAfterLogin() {
+    location.pathname = "/landing";
   }
 }
 
-//  ===================== //
-
+// ========================= SIGNUP ================================== //
 // ============================= //
 class makeSignupForm {
   constructor() {
@@ -97,6 +114,7 @@ class makeSignupForm {
     this.signupForm.secondName.onkeyup = this.clickSignupButton.bind(this);
     this.signupForm.userEmail.onkeyup = this.clickSignupButton.bind(this);
     this.signupForm.dateOfBirth.onkeyup = this.clickSignupButton.bind(this);
+    this.signupForm.tAndC.onkeyup = this.clickSignupButton.bind(this);
     this.signupForm.signupButton.onclick = this.signupButtonAction.bind(this);
   }
 
@@ -122,41 +140,82 @@ class makeSignupForm {
     ) {
       alert("Please complete the form");
     } else {
-      localStorage.setItem("email", this.signupForm.userEmail.value);
+      this.saveEmailToLS();
       this.loadAfterSignUp();
-      routeToLoginAfterSignup();
+      this.routeToLoginAfterSignup();
+    }
+  }
+
+  saveEmailToLS() {
+    localStorage.setItem("email", this.signupForm.userEmail.value);
+  }
+
+  routeToLoginAfterSignup() {
+    if (location.pathname != null || location.pathname != "") {
+      location.pathname = "/login";
     }
   }
 }
 
-// =========================== //
+// ===================== //
 
-// let login = new loginPage();
-// let signuppage = new makeSignupForm();
+class makeLandingpage {
+  constructor() {
+    this.landingBody = this.landingObject();
+    this.addLandingForm();
+    this.buttonAction();
+  }
+  landingObject() {
+    let landingFormObj = {
+      message: createTag("p", "landingPage"),
+      logoutButton: createTag("button", "log out"),
+      clearLSButton: createTag("button", "Clear Local Storage")
+    };
+    return landingFormObj;
+  }
 
-// =============== //
+  addLandingForm() {
+    pushToHtml(app, this.landingBody.message);
+    pushToHtml(app, this.landingBody.logoutButton);
+    pushToHtml(app, this.landingBody.clearLSButton);
+  }
 
-function routeToLoginAfterSignup() {
-  if (location.pathname != null || location.pathname != "") {
-    location.pathname = "/login";
+  buttonAction() {
+    this.landingBody.logoutButton.onclick = this.logout.bind(this);
+    this.landingBody.clearLSButton.onclick = this.clearLS.bind(this);
+  }
+
+  logout() {
+    localStorage.removeItem("password");
+    mainRouting();
+  }
+
+  clearLS(){
+      localStorage.clear();
+      mainRouting();
   }
 }
 
-// ============= //
+// ============================== //
+// ============================== //
+// ============================== //
+
 function showLogin() {
-  new loginPage();
+  new showLoginPage();
   if (location.pathname != "/login") {
     location.pathname = "/login";
   }
 }
 
-function showSignup() {
-  new loginPage();
-  if (location.pathname != "/signup") {
+function mainRouting() {
+  if (localStorage.getItem("email") == null) {
+    new makeSignupForm();
     location.pathname = "/signup";
+  } else {
+    showLogin();
+    location.pathname = "/login";
   }
 }
-
 // ===================== //
 
 function onloadCheck() {
@@ -164,24 +223,15 @@ function onloadCheck() {
     showLogin();
   } else if (location.pathname == "/signup") {
     new makeSignupForm();
-  }
-  else if(location.pathname == '/'){
-    if(localStorage.getItem('email')==null){
-        new makeSignupForm();
-    }
-    else {
-        // if(localStorage.getItem('email')!= null){
-        //     showLogin();
-        // }
-        
-        // console.log('asds');
-        
-            showLogin();
-        
-    }
+  } else if (
+    location.pathname == "/landing" &&
+    localStorage.getItem("password") != null
+  ) {
+    new makeLandingpage();
+  } else {
+    mainRouting();
   }
 }
-
 // =================== //
 
 window.onload = onloadCheck;

@@ -144,18 +144,18 @@ function pushToHtml(parent, child) {
 
 var app = document.querySelector("#app");
 
-var loginPage =
+var showLoginPage =
 /*#__PURE__*/
 function () {
-  function loginPage() {
-    _classCallCheck(this, loginPage);
+  function showLoginPage() {
+    _classCallCheck(this, showLoginPage);
 
     this.loginForm = this.loginObject();
     this.addLoginForm();
-    this.loginButtonFunction();
+    this.submitFuncion(); // console.log(this.loginForm.loginButton);
   }
 
-  _createClass(loginPage, [{
+  _createClass(showLoginPage, [{
     key: "loginObject",
     value: function loginObject() {
       var loginFormObj = {
@@ -175,27 +175,40 @@ function () {
       pushToHtml(app, this.loginForm.loginButton);
     }
   }, {
-    key: "addtoLC",
-    value: function addtoLC(inputKey, inputValue) {
-      if (inputValue == "") {
-        alert("Empty " + inputKey);
+    key: "submitFuncion",
+    value: function submitFuncion() {
+      this.loginForm.userEmail.onkeyup = this.clickLoginButton.bind(this);
+      this.loginForm.userPassword.onkeyup = this.clickLoginButton.bind(this);
+      this.loginForm.loginButton.onclick = this.loginButtonAction.bind(this);
+    }
+  }, {
+    key: "clickLoginButton",
+    value: function clickLoginButton(e) {
+      if (e.key == "Enter") {
+        this.loginForm.loginButton.click();
+      }
+    } //   loginButtonAction() {}
+
+  }, {
+    key: "loginButtonAction",
+    value: function loginButtonAction() {
+      if (this.loginForm.userEmail.value == "" || this.loginForm.userPassword.value == "") {
+        alert("Error");
       } else {
-        localStorage.setItem(inputKey, inputValue);
+        localStorage.setItem("email", this.loginForm.userEmail.value);
+        localStorage.setItem("password", this.loginForm.userPassword.value);
+        this.routerToLandingPageAfterLogin();
       }
     }
   }, {
-    key: "loginButtonFunction",
-    value: function loginButtonFunction() {
-      var _this = this;
-
-      this.loginForm.loginButton.onclick = function () {
-        _this.addtoLC("email", _this.loginForm.userEmail.value);
-      };
+    key: "routerToLandingPageAfterLogin",
+    value: function routerToLandingPageAfterLogin() {
+      location.pathname = "/landing";
     }
   }]);
 
-  return loginPage;
-}(); //  ===================== //
+  return showLoginPage;
+}(); // ========================= SIGNUP ================================== //
 // ============================= //
 
 
@@ -245,6 +258,7 @@ function () {
       this.signupForm.secondName.onkeyup = this.clickSignupButton.bind(this);
       this.signupForm.userEmail.onkeyup = this.clickSignupButton.bind(this);
       this.signupForm.dateOfBirth.onkeyup = this.clickSignupButton.bind(this);
+      this.signupForm.tAndC.onkeyup = this.clickSignupButton.bind(this);
       this.signupForm.signupButton.onclick = this.signupButtonAction.bind(this);
     }
   }, {
@@ -269,40 +283,98 @@ function () {
       } else if (this.signupForm.userEmail.value == "" || this.signupForm.firstName.value == "" || this.signupForm.dateOfBirth.value == "") {
         alert("Please complete the form");
       } else {
-        localStorage.setItem("email", this.signupForm.userEmail.value);
+        this.saveEmailToLS();
         this.loadAfterSignUp();
-        routeToLoginAfterSignup();
+        this.routeToLoginAfterSignup();
+      }
+    }
+  }, {
+    key: "saveEmailToLS",
+    value: function saveEmailToLS() {
+      localStorage.setItem("email", this.signupForm.userEmail.value);
+    }
+  }, {
+    key: "routeToLoginAfterSignup",
+    value: function routeToLoginAfterSignup() {
+      if (location.pathname != null || location.pathname != "") {
+        location.pathname = "/login";
       }
     }
   }]);
 
   return makeSignupForm;
-}(); // =========================== //
-// let login = new loginPage();
-// let signuppage = new makeSignupForm();
-// =============== //
+}(); // ===================== //
 
 
-function routeToLoginAfterSignup() {
-  if (location.pathname != null || location.pathname != "") {
-    location.pathname = "/login";
+var makeLandingpage =
+/*#__PURE__*/
+function () {
+  function makeLandingpage() {
+    _classCallCheck(this, makeLandingpage);
+
+    this.landingBody = this.landingObject();
+    this.addLandingForm();
+    this.buttonAction();
   }
-} // ============= //
+
+  _createClass(makeLandingpage, [{
+    key: "landingObject",
+    value: function landingObject() {
+      var landingFormObj = {
+        message: createTag("p", "landingPage"),
+        logoutButton: createTag("button", "log out"),
+        clearLSButton: createTag("button", "Clear Local Storage")
+      };
+      return landingFormObj;
+    }
+  }, {
+    key: "addLandingForm",
+    value: function addLandingForm() {
+      pushToHtml(app, this.landingBody.message);
+      pushToHtml(app, this.landingBody.logoutButton);
+      pushToHtml(app, this.landingBody.clearLSButton);
+    }
+  }, {
+    key: "buttonAction",
+    value: function buttonAction() {
+      this.landingBody.logoutButton.onclick = this.logout.bind(this);
+      this.landingBody.clearLSButton.onclick = this.clearLS.bind(this);
+    }
+  }, {
+    key: "logout",
+    value: function logout() {
+      localStorage.removeItem("password");
+      mainRouting();
+    }
+  }, {
+    key: "clearLS",
+    value: function clearLS() {
+      localStorage.clear();
+      mainRouting();
+    }
+  }]);
+
+  return makeLandingpage;
+}(); // ============================== //
+// ============================== //
+// ============================== //
 
 
 function showLogin() {
-  new loginPage();
+  new showLoginPage();
 
   if (location.pathname != "/login") {
     location.pathname = "/login";
   }
 }
 
-function showSignup() {
-  new loginPage();
-
-  if (location.pathname != "/signup") {
+function mainRouting() {
+  if (localStorage.getItem("email") == null) {
+    new makeSignupForm();
     location.pathname = "/signup";
+  } else {
+    showLogin();
+    location.pathname = "/login";
   }
 } // ===================== //
 
@@ -312,16 +384,10 @@ function onloadCheck() {
     showLogin();
   } else if (location.pathname == "/signup") {
     new makeSignupForm();
-  } else if (location.pathname == '/') {
-    if (localStorage.getItem('email') == null) {
-      new makeSignupForm();
-    } else {
-      // if(localStorage.getItem('email')!= null){
-      //     showLogin();
-      // }
-      // console.log('asds');
-      showLogin();
-    }
+  } else if (location.pathname == "/landing" && localStorage.getItem("password") != null) {
+    new makeLandingpage();
+  } else {
+    mainRouting();
   }
 } // =================== //
 
